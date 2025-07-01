@@ -1,44 +1,30 @@
-const express = require('express');
+const express = require('express')
 const mongoose = require('mongoose');
-const cors = require('cors');
+const cors =require('cors');
+const Product = require('./models/product.model.js');
 const ProductRoute = require('./routes/product.route.js');
+const app = express()
 
-const app = express();
+
+//Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+
+//Routes
 app.use('/api/products', ProductRoute);
 
-// --- Mongoose Lazy Connection ---
-let cached = global.mongoose || { conn: null, promise: null };
 
-async function connectDB() {
-  if (cached.conn) return cached.conn;
 
-  if (!cached.promise) {
-    const MONGO_URI = "mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/test?retryWrites=true&w=majority";
-    cached.promise = mongoose.connect(MONGO_URI, {
-      bufferCommands: false,
-    }).then((mongoose) => {
-      return mongoose;
+
+mongoose.connect("mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/")
+    .then(() => {
+        console.log("Connected to database!")
+        app.listen(3000, () => {
+            console.log("Server is running on port 3000")
+        });
+    })
+    .catch(() => {
+        console.log("Connection failed!")
     });
-  }
-  cached.conn = await cached.promise;
-  return cached.conn;
-}
-
-// Exported handler for Vercel
-module.exports = async (req, res) => {
-  try {
-    await connectDB();       // Wait for DB before handling route
-    return app(req, res);    // Pass request to Express
-  } catch (err) {
-    console.error("MongoDB Connect Error:", err);
-    res.status(500).json({ error: "MongoDB connection failed" });
-  }
-};
-
-// Allow global caching for re-use
-if (!global.mongoose) {
-  global.mongoose = cached;
-}
