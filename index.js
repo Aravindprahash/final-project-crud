@@ -18,7 +18,7 @@ app.use('/api/products', ProductRoute);
 
 
 
-mongoose.connect("mongodb+srv://aravindprahash19072004:Aravind1719@cluster0.czgpo5y.mongodb.net/")
+mongoose.connect("mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/")
     .then(() => {
         console.log("Connected to database!")
         app.listen(3000, () => {
