@@ -1,30 +1,31 @@
-const express = require('express')
+const express = require('express');
 const mongoose = require('mongoose');
-const cors =require('cors');
-const Product = require('./models/product.model.js');
+const cors = require('cors');
 const ProductRoute = require('./routes/product.route.js');
-const app = express()
 
+const app = express();
 
-//Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
-//Routes
 app.use('/api/products', ProductRoute);
 
+// Connect to MongoDB only once (cache connection)
+let isConnected = false;
+async function connectDB() {
+  if (isConnected) return;
+  try {
+    await mongoose.connect("mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/");
+    isConnected = true;
+    console.log("Connected to MongoDB ✅");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+  }
+}
 
-
-
-mongoose.connect("mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/")
-    .then(() => {
-        console.log("Connected to database!")
-        app.listen(3000, () => {
-            console.log("Server is running on port 3000")
-        });
-    })
-    .catch(() => {
-        console.log("Connection failed!")
-    });
+// Export Express app for Vercel
+module.exports = async (req, res) => {
+  await connectDB(); // Ensure DB is connected before handling request
+  return app(req, res);
+};
