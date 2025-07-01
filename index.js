@@ -16,7 +16,7 @@ async function connectDB() {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
-    const MONGO_URI = "mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/";
+    const MONGO_URI = "mongodb+srv://aravindprahash19072004:Aravind1917@cluster0.ezlfzwt.mongodb.net/test?retryWrites=true&w=majority";
     cached.promise = mongoose.connect(MONGO_URI, {
       bufferCommands: false,
     }).then((mongoose) => {
